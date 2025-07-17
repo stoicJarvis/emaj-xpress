@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const connectMongoDb = async () => {
+const connectMongoDb = async() => {
 
     const mongoURI = process.env.MONGO_URI;
 
@@ -14,11 +14,11 @@ const connectMongoDb = async () => {
 
     try {
         await mongoose.connect(mongoURI);
-        console.log("✅ MongoDB Connected");
+        console.log('✅ MongoDB connected');
     } catch (error) {
         console.error('❌ MongoDB connection error:', error.message);
         process.exit(1);
     }
 }
 
-export { connectMongoDb }
+export default connectMongoDb;

@@ -1,4 +1,5 @@
 import User from "../databases/mongoDb/userModel.js";
+import { MySqlUser } from "../databases/MySql/User.js";
 import bcrypt from 'bcrypt';
 import { HASHING_SALT_ROUNDS } from "../constants.js";
 
@@ -8,22 +9,29 @@ const createAccountController = async (req, res) => {
 
         const hashedPassword = await bcrypt.hash(password, HASHING_SALT_ROUNDS);
 
+        /* Saving data to mongoDB */
         const newUser = new User({
             userName: user_name,
             email: email,
             password: hashedPassword,
         });
-
         await newUser.save();
+
+        /* Saving data to MySql */
+        await MySqlUser.create({
+            username: user_name,
+            email: email,
+            password: hashedPassword,
+        });
 
         res.status(201).json({ message: "User created successfully" });
     } catch (error) {
-        console.log("Error creating user in mongoDB:", error);
-        res.status(500).json({ message: "Error creating user in mongoDB" });
+        console.log("Error creating user", error);
+        res.status(500).json({ message: "Error creating user" });
     }
 }
 
-const loginUserController = async(req, res) => {
+const loginUserController = async (req, res) => {
     const { user_name, password } = req.body;
 
     const user = await User.findOne(
@@ -38,7 +46,7 @@ const loginUserController = async(req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, user.password);
 
-    if(!isPasswordValid) {
+    if (!isPasswordValid) {
         res.status(401).json({ message: "Invalid password" });
     }
 

@@ -6,6 +6,6 @@ import { createAccountValidator, loginUserValidator } from "../middlewares/users
 const usersRouter = express.Router();
 
 usersRouter.post('/createAccount', createAccountValidator, checkExistingAccount, createAccountController);
-usersRouter.post('/login', loginUserValidator, loginUserController);
+usersRouter.get('/login', loginUserValidator, loginUserController);
 
 export default usersRouter;
