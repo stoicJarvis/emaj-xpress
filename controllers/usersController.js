@@ -1,7 +1,8 @@
 import User from "../databases/mongoDb/userModel.js";
 import { MySqlUser } from "../databases/MySql/User.js";
 import bcrypt from 'bcrypt';
-import { HASHING_SALT_ROUNDS } from "../constants.js";
+import { HASHING_SALT_ROUNDS } from "../utils/constants.js";
+import generateJwtToken from "../utils/getJwt.js";
 
 const createAccountController = async (req, res) => {
     try {
@@ -16,6 +17,17 @@ const createAccountController = async (req, res) => {
             password: hashedPassword,
         });
         await newUser.save();
+
+        const jwt = generateJwtToken({
+            user_name: user_name,
+            email: email,
+        });
+
+        res.cookie("token", jwt, {
+            httpOnly: true,
+            secure: true,
+            sameSite: "Strict",
+        });
 
         /* Saving data to MySql */
         await MySqlUser.create({
@@ -49,6 +61,17 @@ const loginUserController = async (req, res) => {
     if (!isPasswordValid) {
         res.status(401).json({ message: "Invalid password" });
     }
+
+    const jwt = generateJwtToken({
+        user_name: user_name,
+        email: user.email,
+    });
+
+    res.cookie("token", jwt, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "Strict",
+    });
 
     res.status(200).json({ message: "Login successful" });
 }

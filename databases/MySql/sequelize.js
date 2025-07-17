@@ -11,18 +11,18 @@ const sequelizeInstance = new Sequelize(
     host: process.env.MYSQL_HOST,
     port: process.env.MYSQL_PORT,
     dialect: 'mysql',
-    logging: true,
+    logging: false,
   }
 );
 
 const connectSequelize = async () => {
-    try {
-        await sequelizeInstance.authenticate();
-        console.log('✅ Sequelize: MySQL connection successfully.');
-    } catch (error) {
-        console.error('❌ Sequelize connection error:', error);
-        process.exit(1);
-    }
+  try {
+    await sequelizeInstance.authenticate();
+    console.log('✅ Sequelize: MySQL connection successfully.');
+  } catch (error) {
+    console.error('❌ Sequelize connection error:', error);
+    process.exit(1);
+  }
 }
 
 export { sequelizeInstance, connectSequelize };

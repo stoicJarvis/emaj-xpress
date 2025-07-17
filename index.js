@@ -4,7 +4,8 @@ import usersRouter from './routes/usersRouter.js';
 import incomingRequestLogger from './middlewares/incomingRequestLogger.js';
 import connectMongoDb from './databases/mongoDb/connectMongoDb.js';
 import { connectSequelize } from './databases/MySql/sequelize.js';
-import { MySqlUser } from './databases/MySql/User.js';
+import authMiddleWare from './middlewares/authMiddleware.js';
+import cookieParser from 'cookie-parser';
 
 dotenv.config();
 
@@ -12,14 +13,21 @@ const app = express();
 
 const startServer = async () => {
   try {
+    /* Datasbase connections */
     connectMongoDb();
     connectSequelize();
 
+    /* Middlewares */
     app.use(incomingRequestLogger);
     app.use(express.json());
+    app.use(cookieParser());
 
     /* Routes */
     app.use('/api/user', usersRouter);
+
+    app.get('/ping', authMiddleWare, (_, res) => {
+      res.send('pong');
+    });
 
     /* Default 404 Route */
     app.use((req, res) => {

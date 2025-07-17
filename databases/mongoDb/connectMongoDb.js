@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-const connectMongoDb = async() => {
+const connectMongoDb = async () => {
 
     const mongoURI = process.env.MONGO_URI;
 
