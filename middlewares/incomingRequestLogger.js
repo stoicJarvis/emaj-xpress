@@ -1,4 +1,4 @@
-const incomingRequestLogger = (req, res, next) => {
+const incomingRequestLogger = (req, _, next) => {
   const now = new Date().toISOString();
   const method = req.method;
   const url = req.originalUrl;
