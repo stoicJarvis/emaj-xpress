@@ -5,11 +5,12 @@ import dotenv from 'dotenv';
 import usersRouter from './routes/usersRouter.js';
 import incomingRequestLogger from './middlewares/incomingRequestLogger.js';
 import connectMongoDb from './databases/mongoDb/connectMongoDb.js';
-import { connectSequelize } from './databases/MySql/sequelize.js';
+import { connectSequelize, sequelizeInstance } from './databases/MySql/sequelize.js';
 import authMiddleWare from './middlewares/authMiddleware.js';
 import cookieParser from 'cookie-parser';
 import asyncHandler from './utils/asyncHandler.js';
 import AppError from './utils/AppError.js';
+import crudUsers from './routes/crudUsers.js';
 
 dotenv.config();
 
@@ -20,6 +21,8 @@ const startServer = async () => {
     /* Datasbase connections */
     connectMongoDb();
     connectSequelize();
+    
+    sequelizeInstance.sync();
 
     /* Middlewares */
     app.use(incomingRequestLogger);
@@ -27,7 +30,9 @@ const startServer = async () => {
     app.use(cookieParser());
 
     /* Routes */
+    app.use('/user', crudUsers);
     app.use('/api/user', usersRouter);
+
 
     app.get('/ping', authMiddleWare, (_, res) => {
       res.send('pong');
